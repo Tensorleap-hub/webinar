@@ -1,0 +1,12 @@
+codeIntegrationId:
+projectId: ""
+secretId:
+entryFile: leap_binder.py
+include:
+    - leap_binder.py
+    - leap_custom_test.py
+    - webinar/config.py
+    - webinar/config.yml
+    - webinar/data/preprocess.py
+    - webinar/utils/gcs_utils.py
+    - webinar/utils/metrics.py
