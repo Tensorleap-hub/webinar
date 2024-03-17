@@ -52,7 +52,6 @@ def unlabled_subset_images() -> PreprocessResponse:
         list_of_image_paths = f.readlines()
     prefix = Path("s3_data/From-Algo/OD_partial2")
     list_of_image_paths = [str(prefix / pth.rstrip("\n")) for pth in list_of_image_paths]
-    print(f"unlabled_subset_images len {len(list_of_image_paths)}")
     return PreprocessResponse(length=len(list_of_image_paths), data={'images': list_of_image_paths})
 
 
@@ -326,7 +325,7 @@ leap_binder.add_custom_metric(regression_metric, "Regression_metric")
 leap_binder.add_custom_metric(classification_metric, "Classification_metric")
 leap_binder.add_custom_metric(object_metric, "Objectness_metric")
 
-# leap_binder.add_custom_metric(confusion_matrix_metric, "Confusion metric")
+leap_binder.add_custom_metric(confusion_matrix_metric, "Confusion_metric")
 
 if __name__ == '__main__':
     leap_binder.check()

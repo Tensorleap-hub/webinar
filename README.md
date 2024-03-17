@@ -1,8 +1,6 @@
 
 # YOLOv7 model with Cognata and Foresight datasets
 
-![Untitled](images/open.png) ////
-
 The Foresight dataset is a collection of images where taken with ADAS and front parking cameras that are installed in 
 the front of vehicles.
 The [YOLOv7](https://github.com/WongKinYiu/yolov7) model is a neural
@@ -14,97 +12,61 @@ This quick start guide will walk you through the steps to get started with this 
 
 ### Population Exploration
 
-explor the latent space??
-
-
 Below is a population exploration plot. It represents a samples similarity map based on the model's latent space,
 built using the extracted features of the trained model.
 
-It shows a visualization of the original foresight dataset (pink) and a new client dataset (purple). 
-We can see two distinct clusters, this means there is a difference in their representation. 
+Using Tensorleap we can cluster the latent space by kmeans algorithm. Below we can see that cluster number 4 contains 
+images of driving at night hours, cluster number 6 contained urban images.
+
+#### cluster number 4:
+
+<div style="display: flex">
+  <img src="images/cluster_4_1.png" alt="Image 1" style="margin-right: 10px;">
+  <img src="images/cluster_4_2.png" alt="Image 2" style="margin-left: 10px;">
+</div>
+
+#### cluster number 6:
+
+<div style="display: flex">
+  <img src="images/cluster_6_1.png" alt="Image 1" style="margin-right: 10px;">
+  <img src="images/cluster_6_2.png" alt="Image 2" style="margin-left: 10px;">
+</div>
+
+
+When we add the target set and colored the dots (samples) by 'origin set', it shows a visualization of the original 
+foresight dataset (pink) and a new client dataset (purple). 
+We can see two distinct clusters, this means there is a difference in their representation, the training set distribution    
+does not fit to the test distribution. 
 The difference can be due to the differences in camera degree, camera location, the position of the steering wheel 
 in the car, the weather and so on.
 
 ![Latent space_dataset_state](images/Latent_space_dataset_state.png)
 
+When we change the dots size to be determined by the loss predicted-it means the loss value tensorleap predict that 
+the model will predict we can see that the target data has much bigger predicted loss. It means the possibility the 
+model will fail to correctly predict the gt bounding boxes is high.
+
+![Latent space_dataset_state_predicted_loss](images/Latent_space_dataset_state_predicted_loss.png)
+
 To address this problem there is a need to generate new synthetic data and train the model on it. 
-With the help of 'Cognata' a new dataset wes synthesized.
+With the help of 'Cognata' a vast amount of labeled data was simulated using realistic sensor setup.
+Using Tensorleap we can validate if the simulation data comes from the target distribution in the eye of the model.
 
+![with_cognata_new](images/with_cognata_new.png)
 
+When we look at the population exploration plot above we can see that the synthetic data does not fit. 
+Looking the dashboard we can see that the average image std has a big gap between the datasets.
 
+![image_std](images/image_std.png)
 
+After changing and simulate another data we can see that it fits to the target distribution. We also see that we 
+do not need all the simulated data, only the images that their distribution closed to the target data distribution.
 
+![PE_with_cognata](images/PE_with_cognata.png)
 
+Looking at the image std VS origin leads to the same conclusions.
 
-
-
-
-#### *Detecting & Handling High Loss Clusters*
-In Question Answering (QA), the "title" refers to the title of the passage from which the question is derived, one of
-the titles in the dataset is ‘American Idol’.
-Further analysis reveals that a cluster in samples related to the ‘American Idol’ title, has a higher loss
-(larger dot sizes).
-At a glance, we can see that this cluster contains questions that relate to the names of songs, 
-such as “What was [singer’s name] first single?” or “What is the name of the song…?”.
-
-![High Loss Clusters_American_idol](images/High_loss_clusters_american_idol.png)
-
-It appears that the model did detect the correct answers. However, the prediction contains quotation marks while the
-ground truth doesn’t.
-
-#### *Detecting Unlabeled Clusters in the Latent Space*
-
-Now, let’s look for additional clusters in our data using an unsupervised clustering algorithm on the model’s latent
-space.
-Upon examination of these clusters, we can see that clusters 13 and 20, located close to each other, contain answers 
-relating to years and dates of events. Cluster 20 (left side image) includes primarily questions that require answers
-related to years, 
-such as “What year…?” where the answers are years represented in digits: “1943”, “1659” etc. 
-Cluster 13 (right side image), includes questions that require answers related to dates and times, such as “When.. ?” 
-and answers of the dates and times represented in text and digits: “early months of 1754”, “1 January 1926”, 
-“20 December 1914”, “1990s” etc.
-
-<div style="display: flex">
-  <img src="images/cluster_20.png" alt="Image 1" style="margin-right: 10px;">
-  <img src="images/cluster_13.png" alt="Image 2" style="margin-left: 10px;">
-</div>
-
-#### *Fetching similar samples*
-
-Another approach to finding clusters using the model’s latent space is fetching similar samples to a selected sample.
-It enables you to identify a cluster with an intrinsic property you want to investigate. 
-By detecting this cluster, you can gain insights into how the model interprets this sample and, in general, retrieve 
-clusters with more abstract patterns.
-
-The figure below shows a Quantitative Questions and Answers cluster. We can see that the cluster which includes 
-quantitative questions and answers contains questions such as “How many …?”, “How often…?”, “How much …?” and answers 
-represented in digits and in words: “three”, “two”, “75%”, “50 million”, “many thousands”.
-
-![fetching_similar_samples](images/fetching_similar_samples.png)
-
-#### *Sample Loss Analysis*
-In this section, we can see the results of a gradient-based explanatory algorithm to interpret what drives the model to 
-make specific predictions. It enables us to analyze which of the informative features contributes most 
-to the loss function. We then generate a heatmap with these features that shows the relevant information.
-
-Let’s analyze the following sample containing the question: “when did Beyonce release ‘formation’?”. The correct 
-predicted answer is: “February 6, 2016”. We see that the tokens that had the most impact on the model’s prediction are:
-‘when’, ‘one’, ‘day’, ‘before’. Also, the answer tokens:’ February’, ‘6’,’ 2016′.
-
-![Sample Loss Analysis](images/Sample_Loss_Analysis.png)
-
-#### *False / Ambiguous Labelings*
-
-The figure below shows an example for illustrates inaccurate and mislabeled samples.
-We can see a sample with the question (shown in purple): “Did Tesla graduate from the university?” The answer from the 
-context is: “he never graduated from the university” (shown in orange). This was detected correctly by the model. 
-However, the ground truth’s indexes refer to “no” (shown in green) in the sentence: “no Sundays or holidays…”. As in 
-the above example, the indexes are incorrect and in an unrelated location to the question.
-
-![False / Ambiguous Labelings](images/Ambiguous Labelings.png)
-
-Such cases distort the model’s performance and negatively affect its fitting when penalizing the model on these samples.
-We can solve these issues by changing the ground truth or by removing such samples.
+![image_std_with_coganta](images/image_std_with_coganta.png)
 
 # Getting Started with Tensorleap Project
 
