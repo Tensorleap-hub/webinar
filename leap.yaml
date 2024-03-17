@@ -1,6 +1,6 @@
-codeIntegrationId:
+codeIntegrationId: 64f715f4418cbb0020a6152e
 projectId: ""
-secretId:
+secretId: 65f2c5b902eec94b20f9b14a
 entryFile: leap_binder.py
 include:
     - leap_binder.py
