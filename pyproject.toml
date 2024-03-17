@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "webinar"
+version = "0.1.0"
+description = ""
+authors = ["Chen Rothschild <chen.rothschild@tensorleap.ai>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.11"
+code-loader = "^1.0.37"
+google-cloud = "^0.34.0"
+google-cloud-storage = "^2.15.0"
+opencv-python = "^4.9.0.80"
+code-loader-helpers = "^1.0.10"
+pillow = "^10.2.0"
+pyyaml = "^6.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
