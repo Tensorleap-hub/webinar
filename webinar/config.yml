@@ -1,0 +1,61 @@
+# -------------------------------------OD Functions ----------------------------------- #
+
+BUCKET_NAME: 'webinar-datasets'
+DATA_FORMAT: "list"  # folder
+MODEL_FORMAT: "inference"
+
+# ------------------ temp ----------------- #
+
+CATEGORIES: ["car", "truck", "pedestrian"]  # class names
+MAX_BB_PER_IMAGE: 150
+
+PRIORS: 3
+IMAGE_SIZE:
+  - 448
+  - 640
+
+FEATURE_MAPS:
+  - - 14
+    - 20
+  - - 28
+    - 40
+  - - 56
+    - 80
+
+BOX_SIZES:
+  - - - 54.6875
+      - 42.5
+    - - 86.0
+      - 74.5625
+    - - 164.125
+      - 153.0
+  - - - 19.40625
+      - 15.484375
+    - - 16.296875
+      - 34.75
+    - - 32.90625
+      - 25.859375
+  - - - 4.3359375
+      - 6.515625
+    - - 9.8515625
+      - 8.265625
+    - - 9.15625
+      - 16.734375
+
+
+# BOX_SIZES = (((568//4, 440//4), (768//4, 972//4), (1836//4, 1604//4)),
+#              ((144//4, 300//4), (304//4, 220//4), (288//4, 584//4)),
+#                  ((48//4, 64//4), (76//4, 144//4), (160//4, 112//4))) #tiny fd
+
+PIXEL_MEAN: [0, 0, 0]
+OFFSET: 0
+STRIDES:
+  - 8
+  - 16
+  - 32
+CONF_THRESH: 0.35
+NMS_THRESH: 0.65
+OVERLAP_THRESH: 0.0625  # might need to be 1/16
+
+TRAINING_CATEGORIES: ['train', 'valid']
+MAX_IMAGES: 3000000
