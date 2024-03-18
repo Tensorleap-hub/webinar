@@ -52,21 +52,21 @@ To address this problem there is a need to generate new synthetic data and train
 With the help of 'Cognata' a vast amount of labeled data was simulated using realistic sensor setup.
 Using Tensorleap we can validate if the simulation data comes from the target distribution in the eye of the model.
 
-![with_cognata_new](images/with_cognata_new_old.png)
+![with_cognata_new](images/with_cognata_new.png)
 
 When we look at the population exploration plot above we can see that the synthetic data does not fit. 
 Looking the dashboard we can see that the average image std has a big gap between the datasets.
 
-![image_std](images/image_std_old.png)
+![image_std](images/image_std.png)
 
 After changing and simulate another data we can see that it fits to the target distribution. We also see that we 
 do not need all the simulated data, only the images that their distribution closed to the target data distribution.
 
-![PE_with_cognata](images/PE_with_cognata_old.png)
+![PE_with_cognata](images/PE_with_cognata.png)
 
 Looking at the image std VS origin leads to the same conclusions.
 
-![image_std_with_coganta](images/image_std_with_coganta_old.png)
+![image_std_with_coganta](images/image_std_with_coganta.png)
 
 # Getting Started with Tensorleap Project
 
