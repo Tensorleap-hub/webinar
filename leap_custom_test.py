@@ -44,6 +44,12 @@ def check_custom_test():
             image_path_ = image_path(idx, set)
             origin_path_ = origin_path(idx, set)
             sample_index_ = sample_index(idx, set)
+            metadata_color_brightness_mean_ = metadata_color_brightness_mean(idx, set)
+            metadata_color_brightness_std_ = metadata_color_brightness_std(idx, set)
+            metadata_contrast_ = metadata_contrast(idx, set)
+            compute_image_temperature_ = compute_image_temperature(idx, set)
+            extract_hsv_metadata_ = extract_hsv_metadata(idx, set)
+            extract_lab_metadata_ = extract_lab_metadata(idx, set)
 
             # get visualizers
         except:

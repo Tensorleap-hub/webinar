@@ -27,6 +27,7 @@ car_ind = CONFIG['CATEGORIES'].index("car")
 truck_ind = CONFIG['CATEGORIES'].index("truck")
 pedestrian_ind = CONFIG['CATEGORIES'].index("pedestrian")
 
+
 # Preprocess Function
 def subset_images_list() -> List[PreprocessResponse]:
     train_files = Path('dataset/anno_data.txt')
@@ -98,7 +99,7 @@ def origin_path(idx: int, data: PreprocessResponse) -> str:
     """
 
     if "/cognata/" in data.data['images'][idx]:
-        str_out = "cognata"
+        str_out = "cognata_new"
     elif "/bdd100k/" in data.data['images'][idx]:
         str_out = "bdd100k"
     elif "/foresight/" in data.data['images'][idx]:
@@ -116,9 +117,9 @@ def origin_path(idx: int, data: PreprocessResponse) -> str:
     elif "/Airport/" in data.data['images'][idx]:
         str_out = "airport"
     elif "/cognata_video_split/" in data.data['images'][idx]:
-        str_out = "cognata_new"
+        str_out = "cognata"
     elif "/cognata_v2_with_gt/" in data.data['images'][idx]:
-        str_out = "cognata_new"
+        str_out = "cognata"
     elif "/foresight_unlabeled_data/" in data.data['images'][idx]:
         str_out = "foresight_unlabeled"
     else:
@@ -298,6 +299,64 @@ def avg_bb_aspect_ratio(index: int, subset: PreprocessResponse) -> float:
 
 def sample_index(index: int, subset: PreprocessResponse) -> float:
     return float(index)
+
+
+
+def metadata_color_brightness_mean(idx: int, preprocess: PreprocessResponse) -> dict:
+    image = input_image(idx, preprocess)
+    b, g, r = cv2.split(image)
+    res = {"red": float(r.mean()), "green": float(g.mean()), "blue": float(b.mean())}
+
+    return res
+
+
+def metadata_color_brightness_std(idx: int, preprocess: PreprocessResponse) -> dict:
+    image = input_image(idx, preprocess)
+    b, g, r = cv2.split(image)
+    res = {"red": float(r.std()), "green": float(g.std()), "blue": float(b.std())}
+
+    return res
+
+
+def metadata_contrast(idx: int, preprocess: PreprocessResponse) -> float:
+    image = input_image(idx, preprocess)
+    img_lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(img_lab)
+    df = abs(a - b)
+
+    return float(np.mean(df))
+
+
+def compute_image_temperature(idx: int, preprocess: PreprocessResponse) -> float:
+    image = input_image(idx, preprocess)
+    lab_image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+    mean_a = np.mean(lab_image[:, :, 1])
+    mean_b = np.mean(lab_image[:, :, 2])
+    color_temperature = 2000 + (mean_a + mean_b) / 2
+
+    return float(color_temperature)
+
+
+def extract_hsv_metadata(idx: int, preprocess: PreprocessResponse) -> Dict[str, float]:
+    image = input_image(idx, preprocess)
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+    hue_range = np.ptp(hsv_image[:, :, 0])  #
+    saturation_level = np.mean(hsv_image[:, :, 1])
+
+    res = {'hue_range': float(hue_range), 'saturation_level': float(saturation_level)}
+
+    return res
+
+
+def extract_lab_metadata(idx: int, preprocess: PreprocessResponse) -> Dict[str, float]:
+    image = input_image(idx, preprocess)
+    lab_image = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+    lightness_mean = np.mean(lab_image[:, :, 0])
+    a_mean = np.mean(lab_image[:, :, 1])
+    b_mean = np.mean(lab_image[:, :, 2])
+    res = {'lightness_mean': float(lightness_mean), 'a_mean': float(a_mean), 'b_mean': float(b_mean)}
+
+    return res
 
 
 LABELS = ["x", "y", "w", "h", "object"] + CONFIG['CATEGORIES']
