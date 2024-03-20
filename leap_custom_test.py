@@ -12,9 +12,9 @@ def check_custom_test():
     val = subset[1]
     # val.data['images'] = #ddlete the first image
 
-    set = val
+    set = train
     unlabeled_set = unlabled_subset_images()
-    for idx in range(20):
+    for idx in range(set.length):
         # get input and gt
         try:
             input = input_image(idx, set)

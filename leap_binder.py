@@ -380,6 +380,13 @@ leap_binder.set_metadata(image_path, "image path")
 leap_binder.set_metadata(origin_path, "origin")
 leap_binder.set_metadata(sample_index, "sample_index")
 
+leap_binder.set_metadata(metadata_color_brightness_mean, "color_brightness_mean")
+leap_binder.set_metadata(metadata_color_brightness_std, "color_brightness_std")
+leap_binder.set_metadata(metadata_contrast, "image_contrast")
+leap_binder.set_metadata(compute_image_temperature, "image_temperature")
+leap_binder.set_metadata(extract_hsv_metadata, "hsv")
+leap_binder.set_metadata(extract_lab_metadata, "lab")
+
 leap_binder.add_custom_metric(regression_metric, "Regression_metric")
 leap_binder.add_custom_metric(classification_metric, "Classification_metric")
 leap_binder.add_custom_metric(object_metric, "Objectness_metric")
