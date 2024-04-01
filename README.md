@@ -1,22 +1,87 @@
 
 # YOLOv7 model with Cognata and Foresight datasets
-
+  
 The Foresight dataset is a collection of images where taken with ADAS and front parking cameras that are installed in 
 the front of vehicles.
-The [YOLOv7](https://github.com/WongKinYiu/yolov7) model is a neural
-network model that can be trained to predict object detection given images.
+The [YOLOv7](https://github.com/WongKinYiu/yolov7) model is an object detection trained on `Cognata` <need to change to foresight> dataset.
+A new unlabeled client data in production `foresight_unlabeled` <*need to change?> detected to shift from our trained data distribution using Tensorleap (TL). Here we demonstrate how to detect such issues and handling by tuning a data synthesizing process.
+
+First, by TL's unsupervised algorithms we automatically identify data gaps of unseen datasets and without the need of labels.
+Then, we generate data based on statistics and insights we analyze in TL. We test again to identify if our generated data distribute accordingly to our target set.
+Iteratively, we improve the generated data until satisfying convergence. When we have the final generated dataset, we can fine tune our model on the data distributes as our target data which is unlabeled and consists too few samples.
+
+### Data Shift Detection
+
+We identify the data shift using two strategies in the platform:
+
+1. In TL's insights panel, the new samples detected as `under-represented` cluster. 
+![](images/insight_shift_detected.png)
+
+2. From the Population Exploration plot, it's evident that the new samples are geometrically distinct from the original data.
+![](images/origin_target_samples.png)
+
+The unlabeled data is sourced from a different camera captured by a fisheye camera. The model exhibits errors, misclassifies objects, particularly pedestrians:
+![](images/sample_error_1.png)
+![](images/sample_error_2.png)
+![](images/sample_error_3.png)
+
+### Samples Generation I 
+
+We synthesize samples (CognataA) to tune our model targeting our unlabeled sample. However, there is still a major data shift as seen in the latent space:
+
+![](images/sample_generation_1.png)
+
+We are also alarmed by TL insights: the generated data identified as underrepresented cluster additionally to the target sample:
+
+![](images/sample_generation_1_insights.png)
+
+### Correlated Metadata 
+
+Analyzing external metadata variables, we observe a correlation to `red channel std`: the generated sample has higher values compared to the target data:
+
+![](images/PE_red_std.png) Samples colored by red channel std level 
+![](images/dash_red_std.png) Red channel std across the sources 
+
+
+### Samples Generation II
+
+* Accordingly, we generate new images (`CognataB`) with a lower std of the red channel.
+
+![](images/PE_sample_generation_2.png) Latent space contains the new generated data (`CognataB`)
+![](images/PE_red_std_sample_generation_2.png) Samples colored by red channel std level
+![](images/dash_red_std_sample_generation_2.png) Red channel std across the sources including new generated data
+
+
+### Data Quality Evaluation
+
+New synthesized samples (in green) are more closely aligned to the target data (in yellow):
+
+![](images/PE_gen_quality_eval.png) 
+
+Now we can tune it by selecting using a threshold of distance from the target centroid for instance, or by using an image feature metadata that is correlated to the distance. For instance, using 'color temperature' as seen in below. We can iteratively generate the samples while tuning the image 'color temperature' until reaching satisfactory convergence.
+
+![](images/PE_gen_quality_prioritization_color_temp.png) Samples colored by `color tempratue` level
+
+
 
 **Tensorleap** helps to explore the latent space of a dataset and find new and important insights. It can also be used 
 to find unlabeled clusters or miss-labeling in the dataset in the most efficient way.
 This quick start guide will walk you through the steps to get started with this example repository project.
 
+Since, our target data is unlabeled and consist of few samples we synthesize data with the statistics we found which characterize our target data compared to the origin.
+
+
+
+
+* Through PE, we observe that although the samples spread in the latent space closer to the target, yet, the distribution more closely aligns with the target's outliers. Moreover, further insights revealed of underrepresented samples. Consequently, we enhance the generation process.
+* Investigating other metadata variables that are correlated to the target samples we identify `red_channel_mean`. The target samples have lower values compares to our generated samples.
+
+
+
 ### Population Exploration
 
-Below is a population exploration plot. It represents a samples similarity map based on the model's latent space,
-built using the extracted features of the trained model.
-
-Using Tensorleap we can cluster the latent space by kmeans algorithm. Below we can see that cluster number 4 contains 
-images of driving at night hours, cluster number 6 contained urban images.
+Below is a population exploration plot. It contains samples that are represented based on the model's latent space, built using the extracted features. 
+Using Tensorleap we can cluster the latent space by kmeans algorithm. Below we can see that cluster number 4 contains images of driving at night hours, cluster number 6 contained urban images.
 
 #### cluster number 4:
 

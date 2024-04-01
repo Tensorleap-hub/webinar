@@ -95,15 +95,15 @@ def image_path(idx: int, data: PreprocessResponse) -> str:
 
 def origin_path(idx: int, data: PreprocessResponse) -> str:
     """
-    Returns a string that tells where this sample is from
+    Returns a string indicating the source subset
     """
 
     if "/cognata/" in data.data['images'][idx]:
-        str_out = "cognata_new"
+        str_out = "cognataB" #"cognata_new"
     elif "/bdd100k/" in data.data['images'][idx]:
         str_out = "bdd100k"
     elif "/foresight/" in data.data['images'][idx]:
-        str_out = "foresight"
+        str_out = "foresight_origin" #"foresight"
     elif "/Rivian/" in data.data['images'][idx]:
         if "right" in data.data['images'][idx]:
             str_out = "rivian_right"
@@ -117,9 +117,9 @@ def origin_path(idx: int, data: PreprocessResponse) -> str:
     elif "/Airport/" in data.data['images'][idx]:
         str_out = "airport"
     elif "/cognata_video_split/" in data.data['images'][idx]:
-        str_out = "cognata"
+        str_out = "cognataA" #"cognata"
     elif "/cognata_v2_with_gt/" in data.data['images'][idx]:
-        str_out = "cognata"
+        str_out = "cognataA" #"cognata"
     elif "/foresight_unlabeled_data/" in data.data['images'][idx]:
         str_out = "foresight_unlabeled"
     else:
