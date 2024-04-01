@@ -1,5 +1,5 @@
 
-# YOLOv7 model with Cognata and Foresight datasets
+# Enhancing ADAS Object Detection with YOLOv7: Overcoming Data Shifts through Latent Space Analysis and Efficient Data Synthesis
   
 Tensorleap enables efficient exploration of a model's latent space to detect data shifts in unseen samples, including unlabeled data. This repository showcases how to detect and address such issues, specifically within an object detection task for ADAS. The model developed and analyzed is [YOLOv7](https://github.com/WongKinYiu/yolov7) model. The model was trained on `Foresight` dataset. The Foresight dataset is a collection of images taken in front of parking that are installed in the front of vehicles.
 Using Tensorleap, we identified shifts in the data distribution between our trained model and new, unlabeled client data encountered in production. Here we demonstrate how we identify and handle by tuning a data synthesizing process using Cognata.
@@ -10,16 +10,24 @@ Using Tensorleap, we identified shifts in the data distribution between our trai
 
 We identify the data shift using two strategies in the platform:
 
-1. In TL's insights panel, the new samples detected as `under-represented` cluster. 
+1. From the Population Exploration plot, it's evident that the new samples are geometrically distinct from the original data.
 ![](images/insight_shift_detected.png)
 
-2. From the Population Exploration plot, it's evident that the new samples are geometrically distinct from the original data.
+2. In TL's insights panel, the new samples detected as `under-represented` cluster. 
 ![](images/origin_target_samples.png)
 
 The unlabeled data is sourced from a different camera captured by a fisheye camera. The model exhibits errors, misclassifies objects, particularly pedestrians:
-![](images/sample_error_1.png)
-![](images/sample_error_2.png)
-![](images/sample_error_3.png)
+
+<table>
+  <tr>
+    <td><img src="images/sample_error_4.png" alt="Sample Error 4" width="1000"/></td>
+    <td><img src="images/sample_error_2.png" alt="Sample Error 2" width="1000"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/sample_error_1.png" alt="Sample Error 1" width="1000"/></td>
+    <td><img src="images/sample_error_3.png" alt="Sample Error 3" width="1000"/></td>
+  </tr>
+</table>
 
 ### Samples Generation I 
 
@@ -41,7 +49,7 @@ Analyzing external metadata variables, we observe a correlation to `red channel 
 
 ### Samples Generation II
 
-* Accordingly, we generate new images (`CognataB`) with a lower std of the red channel.
+Accordingly, we generate new images with a lower std of the red channel (`CognataB`).
 
 ![](images/PE_sample_generation_2.png) Latent space contains the new generated data (`CognataB`)
 ![](images/PE_red_std_sample_generation_2.png) Samples colored by red channel std level
@@ -50,15 +58,13 @@ Analyzing external metadata variables, we observe a correlation to `red channel 
 
 ### Data Quality Evaluation
 
-New synthesized samples (in green) are more closely aligned to the target data (in yellow):
+Now, the new synthesized samples (in green) are more closely aligned to the target data (in yellow):
 
 ![](images/PE_gen_quality_eval.png) 
 
-Now we can tune it by selecting using a threshold of distance from the target centroid for instance, or by using an image feature metadata that is correlated to the distance. For instance, using 'color temperature' as seen in below. We can iteratively generate the samples while tuning the image 'color temperature' until reaching satisfactory convergence.
+Additionally, we can further tune the generated samples by selecting based a threshold of distance from the target centroid or by another similarity metric. Another option is using an image feature metadata that is correlated to the distance. For instance, using 'color temperature' as seen in below. We can iteratively generate the samples while tuning the image 'color temperature' until reaching satisfactory convergence.
 
 ![](images/PE_gen_quality_prioritization_color_temp.png) Samples colored by `color tempratue` level
-
-
 
 
 # Getting Started with Tensorleap Project
