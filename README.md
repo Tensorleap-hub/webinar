@@ -1,14 +1,10 @@
 
 # YOLOv7 model with Cognata and Foresight datasets
   
-The Foresight dataset is a collection of images where taken with ADAS and front parking cameras that are installed in 
-the front of vehicles.
-The [YOLOv7](https://github.com/WongKinYiu/yolov7) model is an object detection trained on `Cognata` <need to change to foresight> dataset.
-A new unlabeled client data in production `foresight_unlabeled` <*need to change?> detected to shift from our trained data distribution using Tensorleap (TL). Here we demonstrate how to detect such issues and handling by tuning a data synthesizing process.
+Tensorleap enables efficient exploration of a model's latent space to detect data shifts in unseen samples, including unlabeled data. This repository showcases how to detect and address such issues, specifically within an object detection task for ADAS. The model developed and analyzed is [YOLOv7](https://github.com/WongKinYiu/yolov7) model. The model was trained on `Foresight` dataset. The Foresight dataset is a collection of images taken in front of parking that are installed in the front of vehicles.
+Using Tensorleap, we identified shifts in the data distribution between our trained model and new, unlabeled client data encountered in production. Here we demonstrate how we identify and handle by tuning a data synthesizing process using Cognata.
 
-First, by TL's unsupervised algorithms we automatically identify data gaps of unseen datasets and without the need of labels.
-Then, we generate data based on statistics and insights we analyze in TL. We test again to identify if our generated data distribute accordingly to our target set.
-Iteratively, we improve the generated data until satisfying convergence. When we have the final generated dataset, we can fine tune our model on the data distributes as our target data which is unlabeled and consists too few samples.
+
 
 ### Data Shift Detection
 
@@ -27,7 +23,7 @@ The unlabeled data is sourced from a different camera captured by a fisheye came
 
 ### Samples Generation I 
 
-We synthesize samples (CognataA) to tune our model targeting our unlabeled sample. However, there is still a major data shift as seen in the latent space:
+We synthesize samples (`CognataA`) to tune our model targeting our unlabeled sample. However, there is still a major data shift as seen in the latent space:
 
 ![](images/sample_generation_1.png)
 
@@ -69,12 +65,6 @@ to find unlabeled clusters or miss-labeling in the dataset in the most efficient
 This quick start guide will walk you through the steps to get started with this example repository project.
 
 Since, our target data is unlabeled and consist of few samples we synthesize data with the statistics we found which characterize our target data compared to the origin.
-
-
-
-
-* Through PE, we observe that although the samples spread in the latent space closer to the target, yet, the distribution more closely aligns with the target's outliers. Moreover, further insights revealed of underrepresented samples. Consequently, we enhance the generation process.
-* Investigating other metadata variables that are correlated to the target samples we identify `red_channel_mean`. The target samples have lower values compares to our generated samples.
 
 
 
