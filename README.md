@@ -60,68 +60,6 @@ Now we can tune it by selecting using a threshold of distance from the target ce
 
 
 
-**Tensorleap** helps to explore the latent space of a dataset and find new and important insights. It can also be used 
-to find unlabeled clusters or miss-labeling in the dataset in the most efficient way.
-This quick start guide will walk you through the steps to get started with this example repository project.
-
-Since, our target data is unlabeled and consist of few samples we synthesize data with the statistics we found which characterize our target data compared to the origin.
-
-
-
-### Population Exploration
-
-Below is a population exploration plot. It contains samples that are represented based on the model's latent space, built using the extracted features. 
-Using Tensorleap we can cluster the latent space by kmeans algorithm. Below we can see that cluster number 4 contains images of driving at night hours, cluster number 6 contained urban images.
-
-#### cluster number 4:
-
-<div style="display: flex">
-  <img src="images/cluster_4_1.png" alt="Image 1" style="margin-right: 10px;">
-  <img src="images/cluster_4_2.png" alt="Image 2" style="margin-left: 10px;">
-</div>
-
-#### cluster number 6:
-
-<div style="display: flex">
-  <img src="images/cluster_6_1.png" alt="Image 1" style="margin-right: 10px;">
-  <img src="images/cluster_6_2.png" alt="Image 2" style="margin-left: 10px;">
-</div>
-
-
-When we add the target set and colored the dots (samples) by 'origin set', it shows a visualization of the original 
-foresight dataset (pink) and a new client dataset (purple). 
-We can see two distinct clusters, this means there is a difference in their representation, the training set distribution    
-does not fit to the test distribution. 
-The difference can be due to the differences in camera degree, camera location, the position of the steering wheel 
-in the car, the weather and so on.
-
-![Latent space_dataset_state](images/Latent_space_dataset_state.png)
-
-When we change the dots size to be determined by the loss predicted-it means the loss value tensorleap predict that 
-the model will predict we can see that the target data has much bigger predicted loss. It means the possibility the 
-model will fail to correctly predict the gt bounding boxes is high.
-
-![Latent space_dataset_state_predicted_loss](images/Latent_space_dataset_state_predicted_loss.png)
-
-To address this problem there is a need to generate new synthetic data and train the model on it. 
-With the help of 'Cognata' a vast amount of labeled data was simulated using realistic sensor setup.
-Using Tensorleap we can validate if the simulation data comes from the target distribution in the eye of the model.
-
-![with_cognata_new](images/with_cognata_new.png)
-
-When we look at the population exploration plot above we can see that the synthetic data does not fit. 
-Looking the dashboard we can see that the average image std has a big gap between the datasets.
-
-![image_std](images/image_std.png)
-
-After changing and simulate another data we can see that it fits to the target distribution. We also see that we 
-do not need all the simulated data, only the images that their distribution closed to the target data distribution.
-
-![PE_with_cognata](images/PE_with_cognata.png)
-
-Looking at the image std VS origin leads to the same conclusions.
-
-![image_std_with_coganta](images/image_std_with_coganta.png)
 
 # Getting Started with Tensorleap Project
 
