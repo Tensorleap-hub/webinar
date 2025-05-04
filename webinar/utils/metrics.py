@@ -1,6 +1,6 @@
 import tensorflow as tf
 from webinar.config import CONFIG
-from typing import List, Tuple
+from typing import List, Tuple, Any
 from code_loader.helpers.detection.yolo.loss import YoloLoss
 from code_loader.helpers.detection.yolo.grid import Grid
 from code_loader.helpers.detection.yolo.utils import reshape_output_list
@@ -41,7 +41,7 @@ LOSS_FN = YoloLoss(num_classes=CLASSES, overlap_thresh=CONFIG['OVERLAP_THRESH'],
                    image_size=CONFIG['IMAGE_SIZE'], yolo_match=True)
 
 
-def compute_losses(y_true: tf.Tensor, y_pred: tf.Tensor) -> Tuple[List[tf.Tensor], List[tf.Tensor]]:
+def compute_losses(y_true: tf.Tensor, y_pred: tf.Tensor) -> Tuple[Any, Any, Any]:
     """
     Computes the sum of the classification (CE loss) and localization (regression) losses from all heads
     """
@@ -55,31 +55,39 @@ def compute_losses(y_true: tf.Tensor, y_pred: tf.Tensor) -> Tuple[List[tf.Tensor
     return loss_l, loss_c, loss_o
 
 
-def od_loss(y_true: tf.Tensor, y_pred: tf.Tensor):  # return batch
+def od_loss(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:  # return batch
     """
     Sums the classification and regression loss
     """
+    y_true = tf.convert_to_tensor(y_true)
+    y_pred = tf.convert_to_tensor(y_pred)
     loss_l, loss_c, loss_o = compute_losses(y_true, y_pred)
     combined_losses = [l + c + o for l, c, o in zip(loss_l, loss_c, loss_o)]
     sum_loss = tf.reduce_sum(combined_losses, axis=0)
-    return sum_loss
+    return sum_loss.numpy()
 
 
 # -------------- metrics ---------------- #
 
-def classification_metric(y_true, y_pred):  # return batch
+def classification_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray: # return batch
+    y_true = tf.convert_to_tensor(y_true)
+    y_pred = tf.convert_to_tensor(y_pred)
     _, loss_c, _ = compute_losses(y_true, y_pred)
-    return tf.squeeze(tf.reduce_sum(loss_c, axis=0), axis=-1)
+    return tf.squeeze(tf.reduce_sum(loss_c, axis=0), axis=-1).numpy()
 
 
-def regression_metric(y_true, y_pred):  # return batch
+def regression_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:  # return batch
+    y_true = tf.convert_to_tensor(y_true)
+    y_pred = tf.convert_to_tensor(y_pred)
     loss_l, _, _ = compute_losses(y_true, y_pred)
-    return tf.squeeze(tf.reduce_sum(loss_l, axis=0), axis=-1)  # shape of batch
+    return tf.squeeze(tf.reduce_sum(loss_l, axis=0), axis=-1).numpy()
 
 
-def object_metric(y_true, y_pred):
+def object_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+    y_true = tf.convert_to_tensor(y_true)
+    y_pred = tf.convert_to_tensor(y_pred)
     _, _, loss_o = compute_losses(y_true, y_pred)
-    return tf.squeeze(tf.reduce_sum(loss_o, axis=0), axis=-1)  # shape of batch
+    return tf.squeeze(tf.reduce_sum(loss_o, axis=0), axis=-1).numpy()
 
 
 def confusion_matrix_metric(y_true, y_pred):

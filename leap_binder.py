@@ -1,5 +1,7 @@
 import os
 from typing import Dict
+
+import numpy as np
 from PIL import ImageFile
 
 from webinar.data.preprocess import generate_subset
@@ -20,6 +22,8 @@ from code_loader.contract.responsedataclasses import BoundingBox
 from pathlib import Path
 import cv2
 from webinar.utils.metrics import *
+from code_loader.utils import rescale_min_max
+
 
 NUM_FEATURES = len(CONFIG['FEATURE_MAPS'])
 NUM_PRIORS = len(CONFIG['BOX_SIZES'][0]) * len(CONFIG['BOX_SIZES'])  # [3*3]
@@ -187,17 +191,20 @@ def bb_array_to_object(bb_array: Union[NDArray[float], tf.Tensor], iscornercoded
 
 
 def gt_decoder(image, ground_truth) -> LeapImageWithBBox:
+    image = np.squeeze(image)
+    image = rescale_min_max(image)
     bb_object = bb_array_to_object(ground_truth, iscornercoded=False, bg_label=BACKGROUND_LABEL, is_gt=True)
-    return LeapImageWithBBox((image * 255).astype(np.float32), bb_object)
+    return LeapImageWithBBox(image, bb_object)
 
 
 def bb_decoder(image, predictions):
+    image = np.squeeze(image)
     """
     Overlays the BB predictions on the image
     """
     from_logits = True if CONFIG['MODEL_FORMAT'] != "inference" else False
     decoded = False if CONFIG['MODEL_FORMAT'] != "inference" else True
-    class_list_reshaped, loc_list_reshaped = reshape_output_list(np.reshape(predictions, (1, *predictions.shape)),
+    class_list_reshaped, loc_list_reshaped = reshape_output_list(predictions,
                                                                  decoded=decoded, image_size=CONFIG['IMAGE_SIZE'],
                                                                  feature_maps=CONFIG['FEATURE_MAPS'])
     # add batch
@@ -208,7 +215,8 @@ def bb_decoder(image, predictions):
                       decoded=decoded
                       )
     bb_object = bb_array_to_object(outputs[0], iscornercoded=True, bg_label=BACKGROUND_LABEL)
-    return LeapImageWithBBox((image * 255).astype(np.float32), bb_object)
+    image = rescale_min_max(image)
+    return LeapImageWithBBox(image, bb_object)
 
 
 # ---------------------------------------------- #
@@ -366,8 +374,10 @@ leap_binder.set_input(input_image, 'images')
 leap_binder.set_ground_truth(get_bb, 'bb')
 leap_binder.add_prediction('flattened prediction', LABELS)
 leap_binder.add_custom_loss(od_loss, 'od_loss')
+
 leap_binder.set_visualizer(gt_decoder, 'bb_gt_decoder', LeapDataType.ImageWithBBox)
 leap_binder.set_visualizer(bb_decoder, 'bb_decoder', LeapDataType.ImageWithBBox)
+
 leap_binder.set_metadata(avg_bb_area_metadata, "BB area")
 leap_binder.set_metadata(min_bb_area_metadata, "min BB area")
 leap_binder.set_metadata(max_bb_area_metadata, "max BB area")
@@ -390,8 +400,6 @@ leap_binder.set_metadata(extract_lab_metadata, "lab")
 leap_binder.add_custom_metric(regression_metric, "Regression_metric")
 leap_binder.add_custom_metric(classification_metric, "Classification_metric")
 leap_binder.add_custom_metric(object_metric, "Objectness_metric")
-
 leap_binder.add_custom_metric(confusion_matrix_metric, "Confusion_metric")
 
-if __name__ == '__main__':
-    leap_binder.check()
+
