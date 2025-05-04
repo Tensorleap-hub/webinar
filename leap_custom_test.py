@@ -1,8 +1,15 @@
-from leap_binder import *
+import numpy as np
 
+from leap_binder import *
+from code_loader.helpers import visualize
 
 def check_custom_test():
-    LABELS = ["x", "y", "w", "h", "object"] + CONFIG['CATEGORIES']
+    plot_vis = True
+    check_generic = True
+
+    if check_generic:
+        leap_binder.check()
+
     dir_path = os.path.dirname(os.path.abspath(__file__))
     model_path = 'model/yolov7-webinar.h5'
     model = tf.keras.models.load_model(os.path.join(dir_path, model_path))
@@ -16,21 +23,28 @@ def check_custom_test():
     unlabeled_set = unlabled_subset_images()
     for idx in range(set.length):
         # get input and gt
-        try:
+        # try:
             input = input_image(idx, set)
             concat = np.expand_dims(input, axis=0)
-            gt = get_bb(idx, set)
-            y_true = tf.convert_to_tensor(np.expand_dims(gt, axis=0))
+            gt = np.expand_dims(get_bb(idx, set), 0)
 
             # model
             y_pred = model([concat])
 
-            # get loss and metrices
-            od_loss_ = od_loss(y_true, y_pred)
-            regression_metric_ = regression_metric(y_true, y_pred)
-            classification_metric_ = classification_metric(y_true, y_pred)
-            object_metric_ = object_metric(y_true, y_pred)
-            # confusion_matrix_metric_ = confusion_matrix_metric(y_true, y_pred)
+            # get loss and metrics
+            od_loss_ = od_loss(gt, y_pred.numpy())
+            regression_metric_ = regression_metric(gt, y_pred.numpy())
+            classification_metric_ = classification_metric(gt, y_pred.numpy())
+            object_metric_ = object_metric(gt, y_pred.numpy())
+            # confusion_matrix_metric_ = confusion_matrix_metric(gt, y_pred.numpy())
+
+            # get visualizers
+            gt_decoder_ = gt_decoder(concat, gt)
+            bb_decoder_ = bb_decoder(concat, y_pred.numpy())
+
+            if plot_vis:
+                visualize(gt_decoder_)
+                visualize(bb_decoder_)
 
             # get metadata
             avg_bb_area = avg_bb_area_metadata(idx, set)
@@ -51,9 +65,8 @@ def check_custom_test():
             extract_hsv_metadata_ = extract_hsv_metadata(idx, set)
             extract_lab_metadata_ = extract_lab_metadata(idx, set)
 
-            # get visualizers
-        except:
-            print(f"index {idx} has a problem")
+        # except:
+        #     print(f"index {idx} has a problem")
 
 
 if __name__ == '__main__':
