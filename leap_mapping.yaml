@@ -75,22 +75,6 @@ decorators:
         - outputKey: bb
           operation: GroundTruth
           id: '603'
-    outputs:
-      loss:
-        - inputKey: '0'
-          operation: Adam
-          id: '606'
-  - operation: Adam
-    data:
-      type: Optimizer
-      custom_input_keys:
-        - 606-0
-    id: '606'
-    inputs:
-      '0':
-        - outputKey: loss
-          operation: CustomLoss
-          id: '605'
     outputs: {}
   - operation: Metric
     data:
