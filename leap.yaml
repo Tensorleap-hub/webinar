@@ -1,6 +1,6 @@
-codeIntegrationId: 64f715f4418cbb0020a6152e
-projectId: ""
-secretId: 6603ee651a529730e6ccfc83
+codeIntegrationId: 6873eea17fd822d4e30c381a
+projectId:
+secretId:
 entryFile: leap_binder.py
 include:
     - leap_binder.py
@@ -10,3 +10,5 @@ include:
     - webinar/data/preprocess.py
     - webinar/utils/gcs_utils.py
     - webinar/utils/metrics.py
+    - requirements.txt
+pythonVersion: py38
