@@ -5,5 +5,3 @@ tensorflow-macos==2.12.0; sys_platform == "darwin"
 pillow==10.2.0
 google-auth>=2.0.0
 opencv-python==4.9.0.80
-code-loader
-code-loader-helpers
