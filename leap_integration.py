@@ -1,8 +1,6 @@
-import numpy as np
-
 from leap_binder import *
 from code_loader.plot_functions.visualize import visualize
-from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_load_model, integration_test
+from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_load_model, tensorleap_integration_test
 from code_loader.contract.datasetclasses import PredictionTypeHandler
 
 LABELS = ["x", "y", "w", "h", "object"] + CONFIG['CATEGORIES']
@@ -15,7 +13,7 @@ def load_model():
     model = tf.keras.models.load_model(os.path.join(dir_path, model_path))
     return model
 
-@integration_test()
+@tensorleap_integration_test()
 def check_custom_test(idx, subset):
     plot_vis = True
     model = load_model()

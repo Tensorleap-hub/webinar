@@ -1,7 +1,6 @@
 import os
 from typing import Dict
 
-import numpy as np
 from PIL import ImageFile
 from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_preprocess, tensorleap_input_encoder, \
     tensorleap_gt_encoder, tensorleap_custom_visualizer, tensorleap_metadata
@@ -15,7 +14,6 @@ from numpy.typing import NDArray
 from code_loader.contract.datasetclasses import PreprocessResponse
 from typing import Union
 import json
-from code_loader import leap_binder
 from code_loader.contract.enums import (
     LeapDataType, DataStateType,
 )
@@ -284,14 +282,4 @@ def image_metadata(index, subset: PreprocessResponse) -> Dict[str, Union[float, 
         'a_mean': float(a_mean),
         'b_mean': float(b_mean)
     }
-
-
-#LABELS = ["x", "y", "w", "h", "object"] + CONFIG['CATEGORIES']
-#leap_binder.add_prediction('flattened prediction', LABELS)
-
-#eap_binder.add_custom_metric(regression_metric, "Regression_metric")
-#leap_binder.add_custom_metric(classification_metric, "Classification_metric")
-#leap_binder.add_custom_metric(object_metric, "Objectness_metric")
-#leap_binder.add_custom_metric(confusion_matrix_metric, "Confusion_metric")
-
 

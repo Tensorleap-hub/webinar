@@ -52,8 +52,6 @@ def compute_losses(y_true: tf.Tensor, y_pred: tf.Tensor) -> Tuple[Any, Any, Any]
                                                                  image_size=CONFIG['IMAGE_SIZE'],
                                                                  feature_maps=CONFIG['FEATURE_MAPS'])  # add batch
     loss_l, loss_c, loss_o = LOSS_FN(y_true=y_true, y_pred=(loc_list_reshaped, class_list_reshaped))
-    # print(f"regression loss is {tf.stack(loss_l).numpy()}")
-    # print(f"classification loss is {tf.stack(loss_o).numpy()}")
     return loss_l, loss_c, loss_o
 
 @tensorleap_custom_loss('od_loss')
@@ -66,7 +64,7 @@ def od_loss(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:  # return bat
     loss_l, loss_c, loss_o = compute_losses(y_true, y_pred)
     combined_losses = [l + c + o for l, c, o in zip(loss_l, loss_c, loss_o)]
     sum_loss = tf.reduce_sum(combined_losses, axis=0)
-    return sum_loss.numpy()
+    return sum_loss.numpy().squeeze(0)
 
 
 # -------------- metrics ---------------- #
