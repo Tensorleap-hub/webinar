@@ -1,10 +1,11 @@
-codeIntegrationId: 6873eea17fd822d4e30c381a
-projectId:
-secretId:
-entryFile: leap_binder.py
+codeIntegrationId: 68e36b7daff94b2a19ad5467
+projectId: 68e36b79aff94b2a19ad5461
+secretId: 68e36b4faff94b2a19ad545f
+entryFile: leap_integration.py
 include:
     - leap_binder.py
     - leap_custom_test.py
+    - leap_integration.py
     - webinar/config.py
     - webinar/config.yml
     - webinar/data/preprocess.py
