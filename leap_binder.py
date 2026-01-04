@@ -130,7 +130,7 @@ def origin_path(idx: int, data: PreprocessResponse) -> str:
         str_out = "none"
     return str_out
 
-@tensorleap_input_encoder('image',channel_dim=-1)
+@tensorleap_input_encoder('image', channel_dim=-1)
 def input_image(idx: int, data: PreprocessResponse) -> NDArray[float]:
     """
     Returns a RGB image normalized and padded
