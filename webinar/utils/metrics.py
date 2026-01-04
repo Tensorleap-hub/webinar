@@ -10,7 +10,7 @@ import numpy as np
 from code_loader.helpers.detection.utils import true_coords_labels
 from code_loader.contract.datasetclasses import ConfusionMatrixElement
 from code_loader.contract.enums import (
-    ConfusionMatrixValue
+    ConfusionMatrixValue, MetricDirection
 )
 from code_loader.helpers.detection.utils import xywh_to_xyxy_format, xyxy_to_xywh_format, jaccard
 from code_loader.helpers.detection.yolo.decoder import Decoder
@@ -68,28 +68,28 @@ def od_loss(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:  # return bat
 
 
 # -------------- metrics ---------------- #
-@tensorleap_custom_metric('Classification_metric')
+@tensorleap_custom_metric('Classification_metric', direction=MetricDirection.Downward)
 def classification_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray: # return batch
     y_true = tf.convert_to_tensor(y_true)
     y_pred = tf.convert_to_tensor(y_pred)
     _, loss_c, _ = compute_losses(y_true, y_pred)
     return tf.squeeze(tf.reduce_sum(loss_c, axis=0), axis=-1).numpy()
 
-@tensorleap_custom_metric('Regression_metric')
+@tensorleap_custom_metric('Regression_metric', direction=MetricDirection.Downward)
 def regression_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:  # return batch
     y_true = tf.convert_to_tensor(y_true)
     y_pred = tf.convert_to_tensor(y_pred)
     loss_l, _, _ = compute_losses(y_true, y_pred)
     return tf.squeeze(tf.reduce_sum(loss_l, axis=0), axis=-1).numpy()
 
-@tensorleap_custom_metric('Objectness_metric')
+@tensorleap_custom_metric('Objectness_metric', direction=MetricDirection.Downward)
 def object_metric(y_true: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
     y_true = tf.convert_to_tensor(y_true)
     y_pred = tf.convert_to_tensor(y_pred)
     _, _, loss_o = compute_losses(y_true, y_pred)
     return tf.squeeze(tf.reduce_sum(loss_o, axis=0), axis=-1).numpy()
 
-@tensorleap_custom_metric('Confusion_metric')
+@tensorleap_custom_metric('Confusion_metric', direction=MetricDirection.Downward)
 def confusion_matrix_metric(y_true, y_pred):
     decoded = False if CONFIG['MODEL_FORMAT'] != "inference" else True
     from_logits = True if CONFIG['MODEL_FORMAT'] != "inference" else False
