@@ -4,7 +4,7 @@ from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_load_
 from code_loader.contract.datasetclasses import PredictionTypeHandler
 
 LABELS = ["x", "y", "w", "h", "object"] + CONFIG['CATEGORIES']
-prediction_type1 = PredictionTypeHandler('flattened prediction', LABELS,channel_dim=-1)
+prediction_type1 = PredictionTypeHandler('flattened prediction', LABELS, channel_dim=-1)
 
 @tensorleap_load_model([prediction_type1])
 def load_model():
