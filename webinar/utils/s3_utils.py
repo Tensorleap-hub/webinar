@@ -3,8 +3,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 from PIL import ImageFile
-from webinar.config import CONFIG
-
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import boto3
 
@@ -14,6 +12,10 @@ import boto3
 # The local cache layout is unchanged, so caches populated in the GCS era
 # still hit.
 _LEGACY_ROOT = "s3_data/From-Algo/"
+S3_BUCKET = "tensorleap-assets"
+S3_KEY_PREFIX = "private-datasets/webinar/"
+# local cache namespace, unchanged from the GCS era so old caches still hit
+CACHE_DIR = "webinar-datasets"
 
 
 def _download(cloud_file_path: str, local_file_path: Optional[str] = None) -> Path:
@@ -21,7 +23,7 @@ def _download(cloud_file_path: str, local_file_path: Optional[str] = None) -> Pa
     # if local_file_path is not specified, cache under $HOME/Tensorleap_data_3/CACHE_DIR
     if local_file_path is None:
         persistent_dir = Path(os.getenv("HOME"))
-        local_file_path = persistent_dir / "Tensorleap_data_3" / CONFIG['CACHE_DIR'] / cloud_file_path
+        local_file_path = persistent_dir / "Tensorleap_data_3" / CACHE_DIR / cloud_file_path
     local_file_path = Path(local_file_path)
 
     # check if the file already exists at the specified local path
@@ -33,9 +35,9 @@ def _download(cloud_file_path: str, local_file_path: Optional[str] = None) -> Pa
     key = cloud_file_path
     if key.startswith(_LEGACY_ROOT):
         key = key[len(_LEGACY_ROOT):]
-    key = CONFIG['S3_KEY_PREFIX'] + key
+    key = S3_KEY_PREFIX + key
 
-    _s3_client().download_file(CONFIG['S3_BUCKET'], key, str(local_file_path))
+    _s3_client().download_file(S3_BUCKET, key, str(local_file_path))
     return local_file_path
 
 
