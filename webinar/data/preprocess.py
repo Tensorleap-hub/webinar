@@ -1,5 +1,5 @@
 from pathlib import Path
-from webinar.utils.gcs_utils import _download
+from webinar.utils.s3_utils import _download
 
 
 def generate_subset(annotations_file: Path):

@@ -1,6 +1,8 @@
 # -------------------------------------OD Functions ----------------------------------- #
 
-BUCKET_NAME: 'webinar-datasets'
+S3_BUCKET: 'tensorleap-assets'
+S3_KEY_PREFIX: 'private-datasets/webinar/'
+CACHE_DIR: 'webinar-datasets'  # local cache namespace, unchanged from the GCS era so old caches still hit
 DATA_FORMAT: "list"  # folder
 MODEL_FORMAT: "inference"
 
