@@ -6,7 +6,7 @@ from code_loader.inner_leap_binder.leapbinder_decorators import tensorleap_prepr
     tensorleap_gt_encoder, tensorleap_custom_visualizer, tensorleap_metadata
 
 from webinar.data.preprocess import generate_subset
-from webinar.utils.gcs_utils import _download
+from webinar.utils.s3_utils import _download
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 from PIL import Image

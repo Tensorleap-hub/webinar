@@ -1,6 +1,5 @@
 # -------------------------------------OD Functions ----------------------------------- #
 
-BUCKET_NAME: 'webinar-datasets'
 DATA_FORMAT: "list"  # folder
 MODEL_FORMAT: "inference"
 
