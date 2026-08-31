@@ -35,13 +35,13 @@ pedestrian_ind = CONFIG['CATEGORIES'].index("pedestrian")
 # Preprocess Function
 @tensorleap_preprocess()
 def subset_images_list() -> List[PreprocessResponse]:
-    train_files = Path('dataset/anno_data.txt')
-    validation_files = Path('dataset/cognata_v2_annotati.txt')
+    train_files = Path('s3_data/From-Algo/OD_partial2/anno_data.txt')
+    validation_files = Path('s3_data/From-Algo/OD_partial2/cognata_v2_ann.txt')
 
     train_image_paths, train_label_data = generate_subset(train_files)
     train_image_paths, train_label_data = train_image_paths[::5], train_label_data[::5]
 
-    validation_image_paths, validation_label_data = generate_subset(validation_files)
+    validation_image_paths, validation_label_data = generate_subset(validation_files, xywh=True)
     validation_image_paths, validation_label_data = validation_image_paths[::5], validation_label_data[::5]
 
     train = PreprocessResponse(length=len(train_image_paths),

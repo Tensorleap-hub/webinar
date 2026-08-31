@@ -47,6 +47,9 @@ def compute_losses(y_true: tf.Tensor, y_pred: tf.Tensor) -> Tuple[Any, Any, Any]
     """
     Computes the sum of the classification (CE loss) and localization (regression) losses from all heads
     """
+    # engine hands tensors as float16; loss math needs float32
+    y_true = tf.cast(y_true, tf.float32)
+    y_pred = tf.cast(y_pred, tf.float32)
     decoded = False if CONFIG['MODEL_FORMAT'] != "inference" else True
     class_list_reshaped, loc_list_reshaped = reshape_output_list(y_pred, decoded=decoded,
                                                                  image_size=CONFIG['IMAGE_SIZE'],
